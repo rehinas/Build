@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
-require('dotenv').config();
-mongoose.connect(process.env.db)
+
+mongoose.connect('mongodb+srv://rehinas:rehi@cluster0.rkmimmv.mongodb.net/emp_app?retryWrites=true&w=majorityserve')
 .then(()=>{
     console.log('Connected to MongoDb')
 })

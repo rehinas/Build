@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-require('dotenv').config();
+
 const logger = require("morgan");
 const cors = require("cors");
 const bodyParser = require('body-parser');
@@ -11,7 +11,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-const PORT = process.env.PORT;
+const PORT = PORT=6666;
 
 app.use(express.static(path.join(__dirname,'/build')))
 const apiRouter = require('./Router/empr');
@@ -31,7 +31,7 @@ app.use((err, req, res, next) => {
 
 require('./db');
 app.get('/*',function(req,res){
-  res.sendFile(path.join(__dirname,'/buil/index.html'))
+  res.sendFile(path.join(__dirname,'/build/index.html'))
 })
 
 app.listen(PORT, () => {
