@@ -1,52 +1,52 @@
 const express = require('express');
 const router = express.Router();
-const Todo = require('../models/todo');
+const Todo = require('../model/Todo');
 
-// Create a new todo
-router.post('/todos', async (req, res) => {
-  try {
-    const todo = new Todo({
-      description: req.body.description,
-      completed: false,
-    });
-    const newTodo = await todo.save();
-    res.status(201).json(newTodo);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+router.use(express.json())
+router.use(express.urlencoded({extended:true}))
 
-// Get all todos
+
 router.get('/todos', async (req, res) => {
   try {
     const todos = await Todo.find();
     res.json(todos);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Update a todo
-router.put('/todos/:id', async (req, res) => {
+router.post('/todos', async (req, res) => {
+  const { description, completed } = req.body;
+  const newTodo =new Todo({
+    description,
+    completed,
+  });
   try {
-    const todo = await Todo.findById(req.params.id);
-    if (todo) {
-      todo.completed = req.body.completed;
-      const updatedTodo = await todo.save();
-      res.json(updatedTodo);
-    }
+    await newTodo.save();
+    res.status(201).json('Todo added');
   } catch (error) {
-    res.status(404).json({ message: 'Todo not found' });
+    res.status(400).json({ error: 'Bad request' });
   }
 });
 
-// Delete a todo
+router.patch('/todos/:id', async (req, res) => {
+  const { id } = req.params;
+  const { completed } = req.body;
+  try {
+    await Todo.findByIdAndUpdate(id, { completed });
+    res.json('Todo updated');
+  } catch (error) {
+    res.status(400).json({ error: 'Bad request' });
+  }
+});
+
 router.delete('/todos/:id', async (req, res) => {
+  const { id } = req.params;
   try {
-    const deletedTodo = await Todo.findByIdAndRemove(req.params.id);
-    res.json(deletedTodo);
+    await Todo.findByIdAndDelete(id);
+    res.json('Todo deleted');
   } catch (error) {
-    res.status(404).json({ message: 'Todo not found' });
+    res.status(400).json({ error: 'Bad request' });
   }
 });
 
